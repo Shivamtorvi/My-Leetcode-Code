@@ -1,0 +1,52 @@
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} HashItem;
+
+#define TABLE_SIZE 10000
+
+int hash(int key) {
+    if (key < 0) key = -key;
+    return key % TABLE_SIZE;
+}
+
+int* twoSum(int* nums, int numsSize, int target, int* returnSize){
+    HashItem* table[TABLE_SIZE] = {NULL};
+    *returnSize = 2;
+    int* result = (int*)malloc(2 * sizeof(int));
+
+    for (int i = 0; i < numsSize; i++) {
+        int complement = target - nums[i];
+        int h = hash(complement);
+
+        // Search complement in hash table
+        while (table[h] != NULL) {
+            if (table[h]->key == complement) {
+                result[0] = table[h]->value;
+                result[1] = i;
+                return result;
+            }
+            h = (h + 1) % TABLE_SIZE;
+        }
+
+        // Insert current number into hash table
+        HashItem* newItem = (HashItem*)malloc(sizeof(HashItem));
+        newItem->key = nums[i];
+        newItem->value = i;
+
+        h = hash(nums[i]);
+        while (table[h] != NULL) {
+            h = (h + 1) % TABLE_SIZE;
+        }
+        table[h] = newItem;
+    }
+
+    // This point won't be reached as per problem constraint (one solution always exists)
+    return NULL;
+}
