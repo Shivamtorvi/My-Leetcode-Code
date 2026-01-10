@@ -1,0 +1,276 @@
+#include<iostream>
+#include <typeinfo>
+
+using namespace std;
+
+class employee
+{
+	private:
+		int id;
+		double salary;
+	public:
+		employee()
+		{
+			this->id=10;
+			this->salary=2000.0;
+		}
+		employee(int id,double salary)
+		{
+			this->id=id;
+			this->salary=salary;
+		}
+		void setId(int id)
+		{
+			this->id=id;
+		}
+		int getId()const
+		{
+			return id;
+		}
+		void setSalary(double salary)
+		{
+			this->salary=salary;
+		}
+		double getSalary()const
+		{
+			return salary;
+		}
+		virtual void accept()
+		{
+			cout<<"enter id:";
+			cin>>id;
+			cout<<"enter salary:";
+			cin>>salary;
+		}
+		virtual void display()
+		{
+			cout<<"id:"<<this->id<<endl;
+			cout<<"salary"<<this->salary<<endl;
+		}
+};
+class manager: virtual public employee
+{
+	private:
+		double bonus;
+	public:
+		manager():employee(101, 5000) 
+		{
+			this->bonus=3000;
+		}
+		manager(int id,double salary,double bonus):employee(id,salary)
+		{
+			this->bonus=bonus;
+		}
+		void setBonus(double bonus)
+		{
+			this->bonus=bonus;
+		}
+		double getBonus() const
+		{
+			return bonus;
+		} 	
+		void accept() override
+		{
+			employee::accept();
+			acceptManager();
+		}
+		void display() override
+		{
+			employee::display();
+			displayManager();
+		}
+		
+	protected:
+		void acceptManager()
+		{
+			cout<<"enter bonus:";
+			cin>>bonus;
+		}
+		void displayManager()
+		{
+			cout<<"bonus:"<<this->bonus<<endl;
+		}
+};
+
+class salesman:virtual public employee
+{
+	private:
+		double comission;
+	public:
+		salesman():employee(101, 5000) 
+		{
+			this->comission=1000;
+		}
+		salesman(double comission):employee()
+		{
+			this->comission=comission;
+		}
+		void setComission(double comission)
+		{
+			this->comission=comission;
+		}
+		double getComission()const
+		{
+			return comission;
+		}
+		void accept()override
+		{
+			employee::accept();
+			acceptSalesman();
+		}
+		void display()override
+		{
+			employee::display();
+			displaySalesman();
+		}
+	protected:
+		void acceptSalesman()
+		{
+			cout<<"enter comission:";
+			cin>>comission;
+		}
+		void displaySalesman()
+		{
+			cout<<"comission:"<<comission<<endl;
+		}
+};
+class salesManager:public manager,public salesman
+{
+	public:
+	salesManager():employee(101,5000), manager(), salesman()
+	{
+	}
+
+	void accept()override
+	{
+		employee::accept();
+        acceptManager();
+		acceptSalesman();
+	}
+	void display()override
+	{
+		employee::display();
+		displayManager();
+		displaySalesman();
+	}
+	
+};
+
+
+int main()
+{
+	employee *arr[12];
+	int index=0;
+	int managerCnt=0;
+	int salesmanCnt=0;
+	int salesManagerCnt=0;
+	
+	int choice;
+	
+		cout<<"1.add manager"<<endl;
+		cout<<"2.add salesman"<<endl;
+		cout<<"3.add salesmanager"<<endl;
+		cout<<"4.display the count of all employees with respect to designation"<<endl;
+		cout<<"5.display all managers"<<endl;
+		cout<<"6.display all salesman"<<endl;
+		cout<<"7.display all SalesManagers"<<endl;
+	do
+	{
+		
+		cout<<"enter your choice:";
+		cin>>choice;
+	switch(choice)
+	{
+		case 1:
+			
+			arr[index]=new manager;
+			cout<<"-----manager details-----"<<endl;
+			arr[index]->accept();
+			index++;
+			cout<<"added succesfully"<<endl;
+			break;
+			
+		case 2:
+			cout<<"-----salesman details-----"<<endl;
+			
+			arr[index]=new salesman;
+			arr[index]->accept();
+			index++;
+			cout<<"added succesfully"<<endl;
+			break;
+			
+		case 3:
+			cout<<"-----salesmanager details-----"<<endl;
+			arr[index]=new salesManager;
+			arr[index]->accept();
+			index++;
+			cout<<"added succesfully"<<endl;
+			break;
+			
+		case 4:
+			
+			for(int i=0;i<index;i++)
+			{
+				if(typeid(*arr[i])==typeid(manager))
+				{
+					managerCnt++;
+				}
+				else if(typeid(*arr[i])==typeid(salesman))
+				{
+					salesmanCnt++;
+				}
+				else if(typeid(*arr[i])==typeid(salesManager))
+				{
+					salesManagerCnt++;
+				}
+			}
+			cout<<"count of manager:"<<managerCnt<<endl;
+			cout<<"count of salesman:"<<salesmanCnt<<endl;
+			cout<<"count of salesmanager:"<<salesManagerCnt<<endl;
+				
+				break;
+			
+		case 5:
+			cout<<"-----Display all manager details-----"<<endl;
+			for(int i=0;i<index;i++)
+			{
+				if(typeid(*arr[i])==typeid(manager))
+				{
+					arr[i]->display();
+				}
+			}
+			break;
+			
+		case 6:
+			cout<<"-----Display all salesman details-----"<<endl;
+			for(int i=0;i<index;i++)
+			{
+				if(typeid(*arr[i])==typeid(salesman))
+				{
+					arr[i]->display();
+				}
+			}
+			break;
+			
+		case 7:
+			cout<<"-----Display all salesmanager details-----"<<endl;
+			for(int i=0;i<index;i++)
+			{
+				if(typeid(*arr[i])==typeid(salesManager))
+				{
+					arr[i]->display();
+				}
+			}
+			break;
+			
+		case 8:
+			cout<<"exit";
+			break;
+		
+		default:
+			cout<<"invalid choice";
+			
+			
+	}
+	}while(choice!=8);
+}
